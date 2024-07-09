@@ -37,19 +37,21 @@ export const PlayerListPage = () => {
   };
 
   return (
-    <>
-      <PlayersTable players={players} />
-      <ButtonGroup>
-        <Button onClick={onAddNewPlayerClick}>Add New Player</Button>
-      </ButtonGroup>
-      <AddPlayerModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={onOpen}
-        onOpenChange={onOpenChange}
-        onAddPlayer={onAddPlayer}
-      />
-    </>
+    <main id="content">
+      <div className="text-center py-10 px-4 sm:px-6 lg:px-8">
+        <PlayersTable players={players} />
+        <ButtonGroup>
+          <Button onClick={onAddNewPlayerClick}>Add New Player</Button>
+        </ButtonGroup>
+        <AddPlayerModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpen={onOpen}
+          onOpenChange={onOpenChange}
+          onAddPlayer={onAddPlayer}
+        />
+      </div>
+    </main>
   );
 };
 

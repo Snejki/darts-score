@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.score {
+    color: blue;
+}
+
+.board,
+.table {
+    float: left;
+}
+
+.board {
+    width: 100%;
+}
+
+.table {
+    width: calc(100% - 500px);
+}
+
+.board svg {
+    height: 100%;
+    width: 100%;
+}
+
+.table table {
+    border-collapse: collapse;
+    float: left;
+    margin: 0 0.5%;
+    text-align: center;
+    width: 49%;
+    
+    .break {
+        background: white;
+    }
+}
+
+#dartboard #areas g path:hover,
+#dartboard #areas g circle:hover {
+    cursor: pointer;
+    opacity: 0.2;
+}
