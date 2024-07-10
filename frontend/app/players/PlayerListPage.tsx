@@ -16,24 +16,31 @@ import {
   getKeyValue,
   TableRow,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useSubmit } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { generateGUID } from "~/common/guid";
 
-interface Player {
+export interface Player {
   id: string;
   name: string;
 }
 
-export const PlayerListPage = () => {
+interface PlayerListPageProps {
+  onChange: (player: Player) => void
+  players: Player[]
+}
+
+export const PlayerListPage = (props: PlayerListPageProps) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const [players] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
+
+  useEffect(() => {
+    setPlayers(props.players)
+  }, [props.players])
 
   const onAddNewPlayerClick = () => {
     onOpen();
-  };
-
-  const onAddPlayer = (player: Player) => {
-    players.push(player);
   };
 
   return (
@@ -48,7 +55,7 @@ export const PlayerListPage = () => {
           onClose={onClose}
           onOpen={onOpen}
           onOpenChange={onOpenChange}
-          onAddPlayer={onAddPlayer}
+          onAddPlayer={props.onChange}
         />
       </div>
     </main>
@@ -113,6 +120,7 @@ const PlayersTable = (props: PlayersTableProps) => {
       label: "Name",
     },
   ];
+  useSubmit();
 
   return (
     <Table>
@@ -132,11 +140,4 @@ const PlayersTable = (props: PlayersTableProps) => {
   );
 };
 
-function generateGUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r =
-      (crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f) |
-      (c === "x" ? 0 : 0x8);
-    return r.toString(16);
-  });
-}
+
