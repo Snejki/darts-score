@@ -19,93 +19,153 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GameBoard } from "~/common/components/GameBoard";
+import { ClassicalGameData, ClassicalGamePlayerThrow } from "./ClassicalTypes";
 
-interface Throw {
-  points: number | undefined;
-  segment: string | undefined;
+interface ClassicalGameProps {
+  gameData: ClassicalGameData;
+  updateGame: (gameData: ClassicalGameData) => void;
+  players: { id: string; name: string };
 }
 
-interface Player {
-  id: string;
-  name: string;
-  currentScore: number;
-  rounds: Throw[][];
-}
+export const ClassicalGame = (props: ClassicalGameProps) => {
+  const MAX_ROUND_THROWS = 3;
+  const [currentRoundThrows, setCurrentRoundThrows] = useState<
+    ClassicalGamePlayerThrow[]
+  >([]);
 
-interface GameState {
-  currentPlayer: Player;
-  roundThrows: number;
-  pointsToScore: number;
-  round: number;
-}
-
-export const ClassicalGame = () => {
-  const [players, setPlayers] = useState<Player[]>(iniitlaPlayersState);
-  const [gameState, setGameState] = useState<GameState>({
-    currentPlayer: players[0],
-    roundThrows: 3,
-    pointsToScore: 501,
-    round: 1,
-  });
-
-  const [roundThrows, setRoundThrows] = useState<Throw[]>([]);
   const onDartBoardClick = (segment: string | undefined) => {
-    if (roundThrows.length >= gameState.roundThrows) {
+    if (isGameFinished()) {
+      return;
+    }
+
+    if (currentRoundThrows.length >= MAX_ROUND_THROWS) {
       return;
     }
 
     if (segment === undefined) {
-      setRoundThrows([
-        ...roundThrows,
-        {
-          points: 0,
-          segment: "0",
-        },
+      setCurrentRoundThrows([
+        ...currentRoundThrows,
+        { points: 0, segment: "0" },
       ]);
     }
 
-    setRoundThrows([
-      ...roundThrows,
+    setCurrentRoundThrows([
+      ...currentRoundThrows,
       { segment, points: calculatePoints(segment) },
     ]);
-    roundThrows.push();
+    //roundThrows.push();
   };
 
-  useEffect(() => {
-    console.log(roundThrows);
-  }, [roundThrows]);
+  const calculateCurrenRoundPoints = (throws: ClassicalGamePlayerThrow[]) =>
+    throws.reduce((acc, curr) => (acc += curr.points ?? 0), 0);
 
   const onFinishRound = () => {
-    gameState.currentPlayer.rounds?.push(roundThrows);
-
-    const roundPoints = roundThrows.reduce(
-      (acc, curr) => (acc += curr.points ?? 0),
-      0
-    );
-
-    setRoundThrows([]);
-
-    const playerPointsAfterLastThrow =
-      roundPoints + gameState.currentPlayer.currentScore;
-    if (playerPointsAfterLastThrow > gameState.pointsToScore) {
-    } else if (playerPointsAfterLastThrow < gameState.pointsToScore) {
-      gameState.currentPlayer.currentScore = playerPointsAfterLastThrow;
-    } else {
-      // check if winner
+    if (isGameFinished()) {
+      return;
     }
 
-    const playerIndex = players.findIndex(
-      (x) => x.id == gameState.currentPlayer.id
-    );
+    pushCurrentTrrows();
+    updatePlayerScore();
+    setCurrentRoundThrows([]);
+    updateCurrentPlayerIndex();
 
-    players[playerIndex] = gameState.currentPlayer;
+    if (shouldFinishGame()) {
+      markGameAsFinished();
+    }
 
-    if (playerIndex + 1 === players.length) {
-      gameState.currentPlayer = players[0];
-    } else {
-      gameState.currentPlayer = players[playerIndex + 1];
+    props.updateGame(props.gameData);
+  };
+
+  const markGameAsFinished = () => {
+    props.gameData.finishedAt = new Date();
+    props.gameData.currentPlayerIndex = undefined;
+  };
+
+  const isGameFinished = () => {
+    return props.gameData.finishedAt != undefined;
+  };
+
+  const shouldFinishGame = () => {
+    if (
+      props.gameData.winners.length > 0 &&
+      props.gameData.currentPlayerIndex == 0
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const pushCurrentTrrows = () => {
+    props.gameData.players[props.gameData.currentPlayerIndex ?? 0].rounds.push({
+      throws: currentRoundThrows,
+    });
+  };
+
+  const updateCurrentPlayerIndex = () => {
+    const playersCount = props.gameData.players.length;
+
+    if (props.gameData.currentPlayerIndex + 1 >= playersCount) {
+      props.gameData.currentPlayerIndex = 0;
+    }
+
+    props.gameData.currentPlayerIndex += 1;
+  };
+
+  const updatePlayerScore = () => {
+    const currentPlayer =
+      props.gameData.players[props.gameData.currentPlayerIndex ?? 0];
+    const currentRoundPoints = calculateCurrenRoundPoints(currentRoundThrows);
+
+    // to much points
+    if (
+      currentPlayer.score + currentRoundPoints >
+      props.gameData.configuration.pointsToScore
+    ) {
+      return;
+    }
+
+    if (
+      currentPlayer.score + currentRoundPoints <
+      props.gameData.configuration.pointsToScore
+    ) {
+      currentPlayer.score += currentRoundPoints;
+    }
+
+    const gameCheckIn = props.gameData.configuration.checkIn;
+
+    if (gameCheckIn == "All") {
+      currentPlayer.score += currentRoundPoints;
+      props.gameData.winners.push({ playerId: currentPlayer.playerId });
+      return;
+    }
+
+    const lastRoundThrow = currentRoundThrows[currentRoundThrows.length - 1];
+
+    if (lastRoundThrow.segment == "BULL") {
+      currentPlayer.score += currentRoundPoints;
+      props.gameData.winners.push({ playerId: currentPlayer.playerId });
+      return;
+    }
+
+    if (gameCheckIn == "Single" && lastRoundThrow.segment?.startsWith("S")) {
+      currentPlayer.score += currentRoundPoints;
+      props.gameData.winners.push({ playerId: currentPlayer.playerId });
+      return;
+    }
+
+    if (gameCheckIn == "Double" && lastRoundThrow.segment?.startsWith("D")) {
+      currentPlayer.score += currentRoundPoints;
+      props.gameData.winners.push({ playerId: currentPlayer.playerId });
+      return;
+    }
+
+    if (gameCheckIn == "Triple" && lastRoundThrow.segment?.startsWith("T")) {
+      currentPlayer.score += currentRoundPoints;
+      props.gameData.winners.push({ playerId: currentPlayer.playerId });
+      return;
     }
   };
 

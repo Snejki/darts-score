@@ -1,7 +1,9 @@
-import ClassicalConfiguration from "./classical/ClassicalConfiguration"
+import { Game } from "./Game"
 
-export const GameConfigurationPage = () => {
-  return (
-    <div><ClassicalConfiguration /></div>
-  )
+interface GameConfigurationPageProps {
+  gameType: string | undefined
+}
+
+export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
+  return Game.configurationPage(props.gameType)
 }

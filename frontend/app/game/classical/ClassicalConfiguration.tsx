@@ -6,7 +6,7 @@ const ClassicalConfiguration = () => {
   const [checkIn, setCheckIn] = useState("Normal");
 
   const toPointsOptions = [101, 201, 301, 501, 701, 901];
-  const checkInType = ["Normal", "Single", "Double", "Triple"];
+  const checkInType = ["All", "Single", "Double", "Triple"];
 
   return (
     <div className="flex flex-col items-center">
