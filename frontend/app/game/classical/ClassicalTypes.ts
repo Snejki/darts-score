@@ -2,7 +2,7 @@ export interface ClassicalGameData {
   id: string;
   type: string;
   state: string;
-  configuration: ClassicalConfiguration;
+  configuration: ClassicalConfigurationType;
   currentPlayerIndex: number | undefined;
   players: {
     playerId: string;
@@ -17,12 +17,11 @@ export interface ClassicalGameData {
 type pointsToScoreType = 101 | 201 | 301 | 501 | 701 | 901;
 type checkInType = "All" | "Single" | "Double" | "Triple";
 
-export interface ClassicalConfiguration {
+export interface ClassicalConfigurationType {
   pointsToScore: pointsToScoreType;
   players: {
     playerId: string;
-    score: number;
-    rounds: ClassicalGamePlayerRound[];
+    name: string
   }[];
   checkIn: checkInType;
 }
