@@ -1,6 +1,6 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { json, useLoaderData, useSubmit } from "@remix-run/react";
-import { createPlayer, getPlayers } from "~/common/data/player";
+import { createPlayer, getPlayers } from "~/common/data/player.server";
 import { Player, PlayerListPage } from "~/players/PlayerListPage";
 
 const PlayersPage = () => {
