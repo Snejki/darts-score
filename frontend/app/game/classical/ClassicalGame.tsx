@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { GameBoard } from "~/common/components/GameBoard";
-import { ClassicalGameData, ClassicalGamePlayerThrow } from "./ClassicalTypes";
+import { ClassicalGameModel, ClassicalGamePlayerThrow } from "./ClassicalTypes";
 
 interface ClassicalGameProps {
-  gameData: ClassicalGameData;
-  updateGame: (gameData: ClassicalGameData) => void;
+  gameData: ClassicalGameModel;
+  updateGame: (gameData: ClassicalGameModel) => void;
   players: { id: string; name: string };
 }
 

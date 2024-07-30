@@ -3,5 +3,5 @@ export const Paths = {
 }
 
 export const BackendPaths = {
-    searchPlayers: (search: string) => `/players/list/${search}`
+    searchPlayers: (search: string) => `/players?query=${search}`
 }

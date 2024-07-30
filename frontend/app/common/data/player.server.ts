@@ -2,8 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { Player } from '~/players/PlayerListPage';
 
 export const createPlayer = async (player: Player) => {
-    console.log("EEEEEEEE");
-    console.log(player)
     try {
         const prisma = new PrismaClient();
         prisma.$connect();
@@ -34,16 +32,10 @@ export const getPlayers = async () => {
     return [];
 }
 
-// export const searchPlayers = async () => {
-//     const playersRef = collection(firestore, "players");
-//     const playersQuery = query(playersRef, where("name", "array-contains-any", "Tomek"), orderBy("name"), limit(10))
-    
-//     return (await getDocs(playersQuery)).docs.map(x => x.data() as Player);
-// }
-
 export const searchPlayers = async (query: string) => {
-    const players = await getPlayers();
-    return players;
-    return players.filter(x => x.name.includes(query));
+    const prisma = new PrismaClient();
+    prisma.$connect();
+
+    return prisma.player.findMany({ where: {name: { contains: query }}});
 }
 

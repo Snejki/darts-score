@@ -19,7 +19,8 @@ import {
 interface ComboBoxInputProps {
   options: { id: string; name: string }[];
   value: { id: string; name: string } | undefined;
-  onChange: (value: { id: string; name: string } | undefined) => void;
+  onChange: (value: { id: string; name: string }) => void;
+  onInputChange: (value: string) => void
 }
 
 export const ComboBoxInput = (props: ComboBoxInputProps) => {
@@ -37,7 +38,7 @@ export const ComboBoxInput = (props: ComboBoxInputProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search framework..." onInput={e => props.onInputChange(e.target.value)}/>
           <CommandEmpty>No players found.</CommandEmpty>
           <CommandList>
             <CommandGroup>

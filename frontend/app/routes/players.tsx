@@ -1,6 +1,6 @@
-import { ActionFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { json, useLoaderData, useSubmit } from "@remix-run/react";
-import { createPlayer, getPlayers } from "~/common/data/player.server";
+import { createPlayer, getPlayers, searchPlayers } from "~/common/data/player.server";
 import { Player, PlayerListPage } from "~/players/PlayerListPage";
 
 const PlayersPage = () => {
@@ -18,9 +18,14 @@ const PlayersPage = () => {
   return <PlayerListPage onChange={addPlayer} players={loaderData} />;
 };
 
-export const loader = async () => {
-  const players = await getPlayers();
-  return json(players);
+export const loader : LoaderFunction = async ({ request: { url }}) => {
+  const query = new URL(url).searchParams.get("query");
+
+  if(query) {
+    return json(await searchPlayers(query));
+  }
+  
+  return json(await getPlayers());
 };
 
 export const action = async (args: ActionFunctionArgs) => {
