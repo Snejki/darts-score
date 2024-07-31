@@ -13,8 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Player {
-  id String @id @map("_id")
+  id   String @id @map("_id")
   name String
+}
+
+model Game {
+  id            String   @id @map("_id")
+  type          String
+  configuration Json
+  gameData      Json
+  state         String
+  players       Json
+  createdAt     DateTime
+  finishedAt    DateTime?
+  winners       Json
 }

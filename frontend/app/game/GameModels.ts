@@ -4,13 +4,9 @@ export type GameType = "x01";
 
 export interface GamePlayer extends Player {}
 
-export interface GameModel<ConfigurationType, GameModel> extends GameModelBase {
+export interface GameModel<ConfigurationType, GameModel> {
   configuration: ConfigurationType;
   gameData: GameModel;
-=
-}
-
-export interface GameModelBase {
   id: string;
   type: string;
   state: string;

@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Game } from "./Game"
 import { Button } from "@/components/ui/button";
 import { ComboBoxInput } from "~/common/components/ComboBox/ComboBoxInput";
-import { BackendPaths } from "~/common/Paths";
+import { BackendPaths, Paths } from "~/common/Paths";
 import { Player } from "~/players/PlayerListPage";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useSubmit } from "@remix-run/react";
 import { GameModel } from "./GameModels";
 import { generateGUID } from "~/common/guid";
 import { useArrayState } from "~/common/hooks/useArrayState";
+import { createGame as createGameServer } from "~/common/data/game.server";
 
 interface GameConfigurationPageProps {
   gameType: string
@@ -17,9 +18,9 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
   const [configuration, setConfiguration] = useState<unknown>({});
   const [players, addPlayer] = useArrayState<Player>([]);
   const specificGameonfiguration = Game.configurationPage(props.gameType, configuration, setConfiguration);
+  const submit = useSubmit();
 
-
-  const createGame = () => {
+  const createGame = async () => {
     const gameModel : GameModel<unknown, unknown> = {
       id: generateGUID(),
       type: props.gameType,
@@ -33,8 +34,7 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
     }
 
     gameModel.gameData = Game.getInitialGameData(props.gameType, gameModel);
-
-    console.log(gameModel)
+    submit(gameModel, { method: "POST"});
   }
 
   return (
