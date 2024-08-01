@@ -1,4 +1,4 @@
-import { SetStateAction } from "react";
+import { ReactNode, SetStateAction } from "react";
 import ClassicalConfiguration from "./classical/ClassicalConfiguration";
 import { ClassicalGame } from "./classical/ClassicalGame";
 import {
@@ -6,15 +6,29 @@ import {
   ClassicalGameDataModel,
   ClassicalGameModel,
 } from "./classical/ClassicalTypes";
-import { GameModel } from "./GameModels";
+import { GameModel, GameTypes } from "./GameModels";
+
+interface GameConfigurationArray {
+  [key: string]: {
+    name: string;
+    configurationPage: (
+      configuration: unknown,
+      setConfiguration: React.Dispatch<unknown>
+    ) => JSX.Element;
+    gamePage: JSX.Element;
+    getInitialGameDataModel: (gameData: unknown) => unknown;
+  };
+}
 
 export class Game {
-  private static games = {
+  private static games : GameConfigurationArray = {
     x01: {
       name: "x01",
       configurationPage: (
         configuration: ClassicalConfigurationType,
-        setConfiguration: React.Dispatch<SetStateAction<ClassicalConfigurationType>>
+        setConfiguration: React.Dispatch<
+          SetStateAction<ClassicalConfigurationType>
+        >
       ) => (
         <ClassicalConfiguration
           configuration={configuration}
@@ -46,7 +60,7 @@ export class Game {
   };
 
   static configurationPage = (
-    gameType: string,
+    gameType: GameTypes,
     configuration: unknown,
     setConfiguration: React.Dispatch<SetStateAction<unknown>>
   ) => {
@@ -57,7 +71,7 @@ export class Game {
   };
 
   static getInitialGameData = (
-    gameType: string,
+    gameType: GameTypes,
     gameData: GameModel<unknown, unknown>
   ) => {
     return this.games[gameType].getInitialGameDataModel(gameData);

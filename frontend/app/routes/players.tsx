@@ -1,6 +1,7 @@
 import { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { json, useLoaderData, useSubmit } from "@remix-run/react";
 import { createPlayer, getPlayers, searchPlayers } from "~/common/data/player.server";
+import { getTypedFormData } from "~/common/models/typedFormData";
 import { Player, PlayerListPage } from "~/players/PlayerListPage";
 
 const PlayersPage = () => {
@@ -30,12 +31,24 @@ export const loader : LoaderFunction = async ({ request: { url }}) => {
 
 export const action = async (args: ActionFunctionArgs) => {
   const { request } = args;
-  const body = await request.formData();
-  const player = Object.fromEntries(body) as Player;
+  const formData = await request.formData();
 
+  const player = mapFormDataToPlayer(formData);
   await createPlayer(player);
 
   return null;
 };
 
 export default PlayersPage;
+
+
+const mapFormDataToPlayer = (formData: FormData) => {
+  const typedFormData = getTypedFormData<Player>(formData); 
+
+  const player : Player = {
+    id: typedFormData.get("id")?.toString() ?? "",
+    name: typedFormData.get("name")?.toString() ?? ""
+  };
+  
+  return player;
+}

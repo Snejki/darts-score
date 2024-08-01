@@ -9,7 +9,6 @@ export const GameBoard = (props: GameBoardProps) => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     const { onDartboardClick } = props;
-    // @ts-ignore
     const id = event.target.id as string;
 
 
@@ -21,17 +20,18 @@ export const GameBoard = (props: GameBoardProps) => {
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div className="board" onClick={onDartBoardClick}>
       <svg
         id="dartboard"
         xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
         version="1.1"
         x="0px"
         y="0px"
         viewBox="0 0 787 774"
-        enable-background="new 0 0 787 774"
-        xml:space="preserve"
+        enableBackground="new 0 0 787 774"
+        xmlSpace="preserve"
       >
         <g id="areas">
           <g id="s">

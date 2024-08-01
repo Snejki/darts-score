@@ -1,18 +1,18 @@
-import {  GameModel } from "../GameModels";
+import { GameModel } from "../GameModels";
 
 export interface ClassicalGameModel
-  extends GameModel<
-    ClassicalConfigurationType,
-    ClassicalGameDataModel
-  > {}
+  extends GameModel<ClassicalConfigurationType, ClassicalGameDataModel> {}
 
 export interface ClassicalGameDataModel {
   currentPlayerIndex: number | undefined;
-  players: {
-    playerId: string;
-    score: number;
-    rounds: ClassicalGamePlayerRound[];
-  }[];
+  players: ClassicalGameDataPlayer[];
+}
+
+export interface ClassicalGameDataPlayer {
+  playerId: string;
+  name: string;
+  score: number;
+  rounds: ClassicalGamePlayerRound[];
 }
 
 type pointsToScoreType = 101 | 201 | 301 | 501 | 701 | 901;

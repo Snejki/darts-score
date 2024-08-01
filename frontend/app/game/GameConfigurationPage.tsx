@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { Game } from "./Game"
 import { Button } from "@/components/ui/button";
 import { ComboBoxInput } from "~/common/components/ComboBox/ComboBoxInput";
-import { BackendPaths, Paths } from "~/common/Paths";
+import { BackendPaths } from "~/common/Paths";
 import { Player } from "~/players/PlayerListPage";
 import { useFetcher, useSubmit } from "@remix-run/react";
-import { GameModel } from "./GameModels";
+import { GameModel, GameTypes } from "./GameModels";
 import { generateGUID } from "~/common/guid";
 import { useArrayState } from "~/common/hooks/useArrayState";
-import { createGame as createGameServer } from "~/common/data/game.server";
 
 interface GameConfigurationPageProps {
-  gameType: string
+  gameType: GameTypes
 }
 
 export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
@@ -34,6 +33,7 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
     }
 
     gameModel.gameData = Game.getInitialGameData(props.gameType, gameModel);
+
     submit(gameModel, { method: "POST"});
   }
 

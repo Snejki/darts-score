@@ -3,12 +3,12 @@ import { redirect, useParams } from "@remix-run/react";
 import { createGame } from "~/common/data/game.server";
 import { Paths } from "~/common/Paths";
 import { GameConfigurationPage } from "~/game/GameConfigurationPage";
-import { GameModel } from "~/game/GameModels";
+import { GameModel, GameTypes } from "~/game/GameModels";
+
 
 const GameConfiguration = () => {
-  const params = useParams();
-  const gameType = params["type"];
-  return <GameConfigurationPage gameType={gameType} />;
+  const { type } = useParams<{type: GameTypes}>();
+  return <GameConfigurationPage gameType={type!} />;
 };
 
 export default GameConfiguration;
