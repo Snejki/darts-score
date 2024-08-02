@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "isbot": "^4.1.0",
+    "object-to-formdata": "^4.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",

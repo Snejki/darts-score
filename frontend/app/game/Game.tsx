@@ -77,6 +77,14 @@ export class Game {
     );
   };
 
+  static gamePage = (
+    game: GameModel<unknown, unknown>,
+    udapteGame: (game: GameModel<unknown, unknown>) => void
+  ) => {
+    console.log(game);
+    return this.games[game.type].gamePage(game, udapteGame);
+  };
+
   static getInitialGameData = (
     gameType: GameTypes,
     gameData: GameModel<unknown, unknown>

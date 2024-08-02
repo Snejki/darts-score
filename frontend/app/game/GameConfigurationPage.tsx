@@ -8,6 +8,7 @@ import { useFetcher, useSubmit } from "@remix-run/react";
 import { GameModel, GameTypes } from "./GameModels";
 import { generateGUID } from "~/common/guid";
 import { useArrayState } from "~/common/hooks/useArrayState";
+import { serialize } from 'object-to-formdata';
 
 interface GameConfigurationPageProps {
   gameType: GameTypes
@@ -33,8 +34,11 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
     }
 
     gameModel.gameData = Game.getInitialGameData(props.gameType, gameModel);
+    console.log(gameModel);
+    const formData = new FormData();
+    formData.set("body", JSON.stringify(gameModel));
 
-    submit(gameModel, { method: "POST"});
+    submit(formData, { method: "POST"});
   }
 
   return (
