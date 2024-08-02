@@ -1,4 +1,4 @@
-import { ReactNode, SetStateAction } from "react";
+import { SetStateAction } from "react";
 import ClassicalConfiguration from "./classical/ClassicalConfiguration";
 import { ClassicalGame } from "./classical/ClassicalGame";
 import {
@@ -8,54 +8,61 @@ import {
 } from "./classical/ClassicalTypes";
 import { GameModel, GameTypes } from "./GameModels";
 
-interface GameConfigurationArray {
-  [key: string]: {
-    name: string;
-    configurationPage: (
-      configuration: unknown,
-      setConfiguration: React.Dispatch<unknown>
-    ) => JSX.Element;
-    gamePage: JSX.Element;
-    getInitialGameDataModel: (gameData: unknown) => unknown;
-  };
+type GameItems = {
+  [x in GameTypes]: GameItem;
+};
+
+interface GameItem {
+  name: string;
+  configurationPage: (
+    configuration: unknown,
+    setConfiguration: React.Dispatch<SetStateAction<unknown>>
+  ) => JSX.Element;
+  gamePage: (game: unknown, updateGame: unknown) => JSX.Element;
+  getInitialGameDataModel: (gameData: unknown) => unknown;
 }
 
-export class Game {
-  private static games : GameConfigurationArray = {
-    x01: {
-      name: "x01",
-      configurationPage: (
-        configuration: ClassicalConfigurationType,
-        setConfiguration: React.Dispatch<
+const classicalGame: GameItem = {
+  name: "Classical game",
+  configurationPage: (configuration, setConfiguration) => (
+    <ClassicalConfiguration
+      configuration={configuration as ClassicalConfigurationType}
+      setConfiguration={
+        setConfiguration as React.Dispatch<
           SetStateAction<ClassicalConfigurationType>
         >
-      ) => (
-        <ClassicalConfiguration
-          configuration={configuration}
-          setConfiguration={setConfiguration}
-        />
-      ),
-      gamePage: ClassicalGame,
-      getInitialGameDataModel: (
-        gameData: ClassicalGameModel
-      ): ClassicalGameDataModel => {
-        const players = gameData.players;
-        return {
-          currentPlayerIndex: 0,
-          players: players.map((x) => ({
-            playerId: x.id,
-            rounds: [],
-            score: 0,
-          })),
-        };
-      },
-    },
+      }
+    />
+  ),
+  gamePage: (game, updateGame) => (
+    <ClassicalGame
+      game={game as ClassicalGameModel}
+      updateGame={updateGame as (game: ClassicalGameModel) => void}
+    />
+  ),
+  getInitialGameDataModel: (gameData): ClassicalGameDataModel => {
+    const players = (gameData as ClassicalGameModel).players;
+    return {
+      currentPlayerIndex: 0,
+      players: players.map((x) => ({
+        playerId: x.id,
+        name: x.name,
+        rounds: [],
+        score: 0,
+      })),
+    };
+  },
+};
+
+export class Game {
+  private static games: GameItems = {
+    x01: classicalGame,
   };
 
   static getGameTypes = () => {
     return Object.keys(this.games).map((key) => ({
       type: key,
-      name: this.games[key].name,
+      name: this.games[key as GameTypes].name,
     }));
   };
 
@@ -65,7 +72,7 @@ export class Game {
     setConfiguration: React.Dispatch<SetStateAction<unknown>>
   ) => {
     return this.games[gameType].configurationPage(
-      configuration,
+      configuration as ClassicalConfigurationType,
       setConfiguration
     );
   };

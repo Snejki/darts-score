@@ -38,11 +38,11 @@ export const ComboBoxInput = (props: ComboBoxInputProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." onInput={e => props.onInputChange(e.target.value)}/>
+          <CommandInput placeholder="Search framework..." onInput={e => props.onInputChange((e.target as HTMLInputElement ).value)}/>
           <CommandEmpty>No players found.</CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {props.options.map((option, index) => (
+              {props.options.map((option) => (
                 <CommandItem key={option.id  } value={option.id} onSelect={() => {
                   props.onChange(option);
                   setOpen(false);

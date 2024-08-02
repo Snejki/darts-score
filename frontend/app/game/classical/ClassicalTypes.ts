@@ -15,8 +15,8 @@ export interface ClassicalGameDataPlayer {
   rounds: ClassicalGamePlayerRound[];
 }
 
-type pointsToScoreType = 101 | 201 | 301 | 501 | 701 | 901;
-type checkInType = "All" | "Single" | "Double" | "Triple";
+export type pointsToScoreType = 101 | 201 | 301 | 501 | 701 | 901;
+export type checkInType = "All" | "Single" | "Double" | "Triple";
 
 export interface ClassicalConfigurationType {
   pointsToScore: pointsToScoreType;

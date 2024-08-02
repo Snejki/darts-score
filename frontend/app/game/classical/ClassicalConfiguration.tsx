@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { SetStateAction, useEffect, useState } from "react";
-import { ClassicalConfigurationType } from "./ClassicalTypes";
+import { SetStateAction, useEffect } from "react";
+import { checkInType, ClassicalConfigurationType, pointsToScoreType } from "./ClassicalTypes";
 
 interface ClassicalConfigurationProps {
   configuration: ClassicalConfigurationType,
@@ -14,21 +14,21 @@ const ClassicalConfiguration = (props: ClassicalConfigurationProps) => {
   }, [])
 
 
-  const setPointsToScore = (value: number) => {
+  const setPointsToScore = (value: pointsToScoreType) => {
     props.setConfiguration(configuration => ({...configuration, pointsToScore: value}));
   }
 
-  const setCheckIn = (value: string) => {
+  const setCheckIn = (value: checkInType) => {
     props.setConfiguration(configuration => ({...configuration, checkIn: value}));
   }
 
-  const toPointsOptions = [101, 201, 301, 501, 701, 901];
-  const checkInType = ["All", "Single", "Double", "Triple"];
+  const availableScores: pointsToScoreType[] = [101, 201, 301, 501, 701, 901];
+  const checkInTypes : checkInType[] = ["All", "Single", "Double", "Triple"];
 
   return (<>
    <h1>Points to score:</h1>
       <div>
-          {toPointsOptions.map((x) => (
+          {availableScores.map((x) => (
             <Button
               variant={
                 x == props.configuration.pointsToScore ? "default" : "secondary"
@@ -43,7 +43,7 @@ const ClassicalConfiguration = (props: ClassicalConfigurationProps) => {
       <div>Check in</div>
       <div>
         <div className="flex gap-1">
-          {checkInType.map((x) => (
+          {checkInTypes.map((x) => (
             <Button
               onClick={() => setCheckIn(x)}
               variant={x == props.configuration.checkIn ? "default" : "secondary"}

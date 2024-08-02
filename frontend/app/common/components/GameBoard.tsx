@@ -9,7 +9,7 @@ export const GameBoard = (props: GameBoardProps) => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     const { onDartboardClick } = props;
-    const id = event.target.id as string;
+    const id = (event.target as Element).id;
 
 
     if (id === "dartboard") {
