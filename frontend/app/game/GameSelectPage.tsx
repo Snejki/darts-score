@@ -14,7 +14,7 @@ export const GameSelectPage = () => {
         {list.map((item, index) => (
           <Card
             key={index}
-            onClick={() => navigate(Paths.gameConfiguration(item.type))}
+            onClick={() => {const path = Paths.gameConfiguration(item.type); navigate(path)}}
             className="h-40 w-40 cursor-pointer primary hover:border-2 transition duration-1000 flex justify-center items-center"
           >
             <h1 className="text-4xl font-black">{item.name}</h1>

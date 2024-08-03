@@ -18,17 +18,16 @@
   float: left;
 }
 
-.board {
+/* .board {
   width: 500px;
-}
+} */
 
 .table {
   width: calc(100% - 500px);
 }
 
 .board svg {
-  height: 500px;
-  width: 500px;
+  width: 75vh;
 }
 
 .table table {
@@ -79,8 +78,9 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 210 12% 20%; 
+    --background-secondary: 210 12% 16%;
+    --foreground: 0 100% 100%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;

@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ClassicalGameDataPlayer } from "../ClassicalTypes";
+import { FaInfoCircle } from "react-icons/fa";
 
 interface PlayerAdditionalInfoProps {
   player: ClassicalGameDataPlayer;
@@ -21,12 +22,10 @@ interface PlayerAdditionalInfoProps {
 
 export const PlayerAdditionalInfo = (props: PlayerAdditionalInfoProps) => {
   const roundsArray = Array.from({ length: props.roundThrows }, (_, i) => i);
-  console.log(roundsArray);
 
   return (
     <Popover>
-      <PopoverTrigger>
-        <Button>Show</Button>
+      <PopoverTrigger><FaInfoCircle />
       </PopoverTrigger>
       <PopoverContent>
         <Table>

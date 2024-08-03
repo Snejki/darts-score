@@ -5,8 +5,6 @@ export const createGame = async (game: GameModel<unknown, unknown>) => {
     const prisma = new PrismaClient();
     prisma.$connect();
 
-    console.log(game);
-
     await prisma.game.create({data: {
         id: game.id,
         configuration: game.configuration as Prisma.JsonArray,

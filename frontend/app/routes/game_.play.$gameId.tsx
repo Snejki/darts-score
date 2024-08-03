@@ -10,7 +10,6 @@ type PlayPageProps = "gameId"
 const PlayPage = () => {
     const { gameId } = useParams<PlayPageProps>();
     const gameData = useLoaderData<GameModel<unknown, unknown>>();
-    console.log(gameData);
     if(!gameData) return null;
 
     return <GamePlayPage id={gameId!} game={gameData}/>
@@ -20,7 +19,6 @@ export const loader : LoaderFunction = async (args : LoaderFunctionArgs) => {
     const gameId = args.params["gameId"];
 
     const game = await getGame(gameId!);
-    console.log(game);
     return game;
 }
 

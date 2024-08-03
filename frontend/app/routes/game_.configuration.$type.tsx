@@ -1,6 +1,7 @@
 import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
-import { useParams } from "@remix-run/react";
+import { redirect, useParams } from "@remix-run/react";
 import { createGame } from "~/common/data/game.server";
+import { Paths } from "~/common/Paths";
 import { GameConfigurationPage } from "~/game/GameConfigurationPage";
 import { GameTypes } from "~/game/GameModels";
 
@@ -17,5 +18,5 @@ export const action : ActionFunction  =  async (args: ActionFunctionArgs)   => {
   const game = JSON.parse((await request.formData()).get("body")?.toString() ?? "");
 
   await createGame(game);
-  return null;
+  return redirect(Paths.game(game.id));
 }

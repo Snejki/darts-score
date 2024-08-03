@@ -7,21 +7,22 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Link } from "@remix-run/react";
 import { GiDart } from "react-icons/gi";
+import { Paths } from "~/common/Paths";
 
 export const NavBar = () => {
   return (
-    <NavigationMenu className="bg-white min-w-full w-full sticky top-0 left-0 border-b-2 flex justify-start">
+    <NavigationMenu className="bg-background min-w-full w-full border-b-2 border-b-backgroundSecondary sticky top-0 left-0 flex justify-start">
       <GiDart />
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to={""}>
+          <Link to={Paths.gameType}>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Play
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link to={""}>
+          <Link to={Paths.players}>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Players
             </NavigationMenuLink>

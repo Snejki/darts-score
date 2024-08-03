@@ -81,7 +81,6 @@ export class Game {
     game: GameModel<unknown, unknown>,
     udapteGame: (game: GameModel<unknown, unknown>) => void
   ) => {
-    console.log(game);
     return this.games[game.type].gamePage(game, udapteGame);
   };
 

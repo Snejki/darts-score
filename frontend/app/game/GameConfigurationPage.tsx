@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Game } from "./Game"
 import { Button } from "@/components/ui/button";
 import { ComboBoxInput } from "~/common/components/ComboBox/ComboBoxInput";
-import { BackendPaths } from "~/common/Paths";
 import { Player } from "~/players/PlayerListPage";
 import { useFetcher, useSubmit } from "@remix-run/react";
 import { GameModel, GameTypes } from "./GameModels";
 import { generateGUID } from "~/common/guid";
 import { useArrayState } from "~/common/hooks/useArrayState";
-import { serialize } from 'object-to-formdata';
+import { Paths } from "~/common/Paths";
 
 interface GameConfigurationPageProps {
   gameType: GameTypes
@@ -34,7 +33,6 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
     }
 
     gameModel.gameData = Game.getInitialGameData(props.gameType, gameModel);
-    console.log(gameModel);
     const formData = new FormData();
     formData.set("body", JSON.stringify(gameModel));
 
@@ -67,7 +65,7 @@ const PlayerConfigurationSection = (props: PlayerConfigurationSectionProps) => {
 
 
   useEffect(() => {
-    playersFetcher.load(BackendPaths.searchPlayers(inputQuery));
+    playersFetcher.load(Paths.searchPlayers(inputQuery));
   }, [inputQuery])
 
   return (
