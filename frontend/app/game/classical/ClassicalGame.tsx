@@ -3,6 +3,8 @@ import { GameBoard } from "~/common/components/GameBoard";
 import { ClassicalGameModel, ClassicalGamePlayerThrow } from "./ClassicalTypes";
 import { Scoreboard } from "./components/Scoreboard";
 import { CurrentRound } from "./components/CurrentRound";
+import { calculateCurrenRoundPoints } from "./utils/classicalGameUtils";
+import { WinnerModal } from "~/common/components/WinnerModal/WinnerModal";
 
 interface ClassicalGameProps {
   game: ClassicalGameModel;
@@ -10,7 +12,9 @@ interface ClassicalGameProps {
 }
 
 export const ClassicalGame = (props: ClassicalGameProps) => {
-  const {game: { gameData }} = props;
+  const {
+    game: { gameData, configuration, winners },
+  } = props;
 
   const MAX_ROUND_THROWS = 3;
   const [currentRoundThrows, setCurrentRoundThrows] = useState<
@@ -18,7 +22,6 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
   >([]);
 
   const onDartBoardClick = (segment: string | undefined) => {
-
     if (isGameFinished() || !segment) {
       return;
     }
@@ -38,11 +41,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
       ...currentRoundThrows,
       { segment, points: calculatePoints(segment) },
     ]);
-    //roundThrows.push();
   };
-
-  const calculateCurrenRoundPoints = (throws: ClassicalGamePlayerThrow[]) =>
-    throws.reduce((acc, curr) => (acc += curr.points ?? 0), 0);
 
   const onFinishRound = () => {
     if (isGameFinished()) {
@@ -71,10 +70,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
   };
 
   const shouldFinishGame = () => {
-    if (
-      props.game.winners.length > 0 &&
-      gameData.currentPlayerIndex == 0
-    ) {
+    if (props.game.winners.length > 0 && gameData.currentPlayerIndex == 0) {
       return true;
     }
 
@@ -82,103 +78,114 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
   };
 
   const pushCurrentTrrows = () => {
-    gameData.players[
-      gameData.currentPlayerIndex ?? 0
-    ].rounds.push({
+    gameData.players[gameData.currentPlayerIndex ?? 0].rounds.push({
       throws: currentRoundThrows,
     });
   };
 
   const updateCurrentPlayerIndex = () => {
     const playersCount = props.game.players.length;
-    if (gameData.currentPlayerIndex) {
+    if (gameData.currentPlayerIndex !== undefined) {
       if (gameData.currentPlayerIndex + 1 >= playersCount) {
         gameData.currentPlayerIndex = 0;
+      } else {
+        gameData.currentPlayerIndex += 1;
       }
-
-      gameData.currentPlayerIndex += 1;
     } else {
       gameData.currentPlayerIndex = 0;
     }
   };
 
   const updatePlayerScore = () => {
-    const currentPlayer =
-      gameData.players[gameData.currentPlayerIndex ?? 0];
+    // todo: chweck if possible to finish
+    const currentPlayer = gameData.players[gameData.currentPlayerIndex ?? 0];
     const currentRoundPoints = calculateCurrenRoundPoints(currentRoundThrows);
 
     // to much points
-    if (
-      currentPlayer.score + currentRoundPoints >
-      props.game.configuration.pointsToScore
-    ) {
+    const playerGamePoints = calculateScore(
+      currentPlayer.score + currentRoundPoints,
+      configuration.pointsToScore
+    );
+    if (playerGamePoints == "TooMuch") {
       return;
     }
 
-    if (
-      currentPlayer.score + currentRoundPoints <
-      props.game.configuration.pointsToScore
-    ) {
+    if (playerGamePoints == "TooLow") {
       currentPlayer.score += currentRoundPoints;
+      return;
     }
 
-    const gameCheckIn = props.game.configuration.checkIn;
-
-    if (gameCheckIn == "All") {
+    if (playerGamePoints == "Exact" && isWinner()) {
       currentPlayer.score += currentRoundPoints;
       props.game.winners.push({ id: currentPlayer.playerId, name: "" });
-      return;
     }
+  };
 
+  const isWinner = () => {
     const lastRoundThrow = currentRoundThrows[currentRoundThrows.length - 1];
+    const { checkIn } = configuration;
 
     if (lastRoundThrow.segment == "BULL") {
-      currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: "" });
-      return;
+      return true;
     }
 
-    if (gameCheckIn == "Single" && lastRoundThrow.segment?.startsWith("S")) {
-      currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: "" });
-      return;
+    if (checkIn == "Single" && lastRoundThrow.segment?.startsWith("S")) {
+      return true;
     }
 
-    if (gameCheckIn == "Double" && lastRoundThrow.segment?.startsWith("D")) {
-      currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: "" });
-      return;
+    if (checkIn == "Double" && lastRoundThrow.segment?.startsWith("D")) {
+      return true;
     }
 
-    if (gameCheckIn == "Triple" && lastRoundThrow.segment?.startsWith("T")) {
-      currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: "" });
-      return;
+    if (checkIn == "Triple" && lastRoundThrow.segment?.startsWith("T")) {
+      return true;
+    }
+
+    if(checkIn === "All") {
+      return true;
+    }
+
+    return false;
+  };
+
+  const calculateScore = (playerScore: number, pointsToScore: number) => {
+    if (playerScore > pointsToScore) return "TooMuch";
+    if (playerScore < pointsToScore) return "TooLow";
+    return "Exact";
+  };
+
+  const undoThrow = () => {
+    if (currentRoundThrows.length > 0) {
+      setCurrentRoundThrows(currentRoundThrows.slice(0, -1));
     }
   };
 
   return (
-    <div className="grid grid-cols-[250px_auto] h-full">
-      <div className="bg-backgroundSecondary">
-        <Scoreboard
-          players={props.game.gameData.players}
-          pointsToWin={props.game.configuration.pointsToScore}
-        />
+    <>
+      <div className="grid grid-cols-[250px_auto] h-full">
+        <div className="bg-backgroundSecondary">
+          <Scoreboard
+            players={props.game.gameData.players}
+            pointsToWin={configuration.pointsToScore}
+          />
+        </div>
+        <div className="h-[70vh] flex flex-col items-center">
+          <CurrentRound
+            player={
+              props.game.gameData.players[
+                props.game.gameData.currentPlayerIndex ?? 0
+              ]
+            }
+            undoThrow={undoThrow}
+            currentThrows={currentRoundThrows}
+            pointsToScore={configuration.pointsToScore}
+            onFinishRound={onFinishRound}
+          />
+          <GameBoard onDartboardClick={onDartBoardClick} />
+        </div>
       </div>
-      <div className="h-[70vh] flex flex-col items-center">
-        <CurrentRound
-          player={
-            props.game.gameData.players[
-              props.game.gameData.currentPlayerIndex ?? 0
-            ]
-          }
-          currentThrows={currentRoundThrows}
-          pointsToScore={props.game.configuration.pointsToScore}
-          onFinishRound={onFinishRound}
-        />
-        <GameBoard onDartboardClick={onDartBoardClick} />
-      </div>
-    </div>
+      <WinnerModal winners={winners} showModal={!!props.game.finishedAt} />
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ClassicalGameDataPlayer } from "../ClassicalTypes";
 import { PlayerAdditionalInfo } from "./PlayerAdditionalInfo";
+import { calculateCurrenRoundPoints } from "../utils/classicalGameUtils";
 
 interface ScoreboardProps {
   players: ClassicalGameDataPlayer[];
@@ -8,13 +9,13 @@ interface ScoreboardProps {
 }
 
 export const Scoreboard = (props: ScoreboardProps) => {
-  const { players, pointsTowin } = props;
+  const { players, pointsToWin } = props;
   return (
     <>
       {players.map((player) => (
         <PlayerCard
           key={player.playerId}
-          pointsToWin={pointsTowin}
+          pointsToWin={pointsToWin}
           player={player}
           isCurrentPlayer={true}
         />
@@ -30,11 +31,14 @@ interface PlayerProps {
 }
 
 const PlayerCard = (props: PlayerProps) => {
-  const { player } = props;
+  const { player, pointsToWin } = props;
 
   const score = player.score;
-  const avg = score / player.rounds ?? 0;
-  const lastRound = player.rounds.at(-1);
+  const avg = score / (player.rounds.length ?? 0);
+
+  const roundScores = player.rounds.map((round) =>
+    calculateCurrenRoundPoints(round.throws)
+  );
 
   return (
     <>
@@ -44,25 +48,19 @@ const PlayerCard = (props: PlayerProps) => {
             {props.player.name}
             <PlayerAdditionalInfo player={props.player} roundThrows={3} />
           </div>
-          <div className="flex flex-row gap-3 justify-center">
-            <div className="h-8 w-8 bg-background text-center">
-              {lastRound?.throws[0].segment}
-            </div>
-            <div className="h-8 w-8 bg-background text-center">
-              {lastRound?.throws[1].segment}
-            </div>
-            <div className="h-8 w-8 bg-background text-center">
-              {lastRound?.throws[2].segment}
-            </div>
+          <div className="text-sm">
+            <div>Score: {score}</div>
+            <div>To win: {pointsToWin - score}</div>
           </div>
         </div>
-        <div className="flex flex-col  pr-3 gap-2 self-end">
-          <div className="text-xs">Score: {score}</div>
-          <div className="text-[8px]">
-            <div>Max: 180</div>
-            <div>Min: 12</div>
-            <div>Avg: {avg}</div>
+        <div className="flex flex-col  pr-3 gap-0 self-end text-[10px]">
+          <div>
+            Max: {roundScores.length > 0 ? Math.max(...roundScores) : "-"}
           </div>
+          <div>
+            Min: {roundScores.length > 0 ? Math.min(...roundScores) : "-"}
+          </div>
+          <div>Avg: {roundScores.length > 0 ? avg : "-"}</div>
         </div>
       </Card>
     </>

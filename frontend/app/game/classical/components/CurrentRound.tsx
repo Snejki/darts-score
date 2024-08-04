@@ -1,26 +1,26 @@
 import {
   Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
 } from "@/components/ui/card";
 import {
   ClassicalGameDataPlayer,
   ClassicalGamePlayerThrow,
 } from "../ClassicalTypes";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { FaUndo } from "react-icons/fa";
+import { calculateCurrenRoundPoints } from "../utils/classicalGameUtils";
 
 interface CurrentRoundProps {
   player: ClassicalGameDataPlayer;
   currentThrows: ClassicalGamePlayerThrow[];
   pointsToScore: number;
   onFinishRound: () => void;
+  undoThrow: () => void
 }
 
 export const CurrentRound = (props: CurrentRoundProps) => {
-  const { player, currentThrows, pointsToScore, onFinishRound } = props;
+  const { player, currentThrows, pointsToScore, onFinishRound, undoThrow } = props;
+
+  const liveScore = player.score + calculateCurrenRoundPoints(currentThrows);
 
   return (
     <Card className="rounded-none p-2 	 bg-backgroundSecondary">
@@ -30,10 +30,10 @@ export const CurrentRound = (props: CurrentRoundProps) => {
               Player: <span className="font-bold">{player.name}</span>
             </div>
             <div>
-              Score: <span className="font-bold">{player.score}</span>
+              Score: <span className="font-bold">{liveScore}</span>
             </div>
             <div>
-              To win: <span className="font-bold">{pointsToScore}</span>
+              To win: <span className="font-bold">{pointsToScore - liveScore}</span>
             </div>
           </div>
           <div className="flex gap-2 justify-center align-middle items-center">
@@ -48,7 +48,7 @@ export const CurrentRound = (props: CurrentRoundProps) => {
             </div>
           </div>
           <div className="flex flex-row justify-end self-center gap-4">
-            <FaUndo className="self-center cursor-pointer hover:opacity-35" />
+            <FaUndo onClick={undoThrow} className="self-center cursor-pointer hover:opacity-35" />
             <Button onClick={onFinishRound}>Finish round</Button>
           </div>
         </div>
