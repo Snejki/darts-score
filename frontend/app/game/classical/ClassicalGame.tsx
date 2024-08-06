@@ -167,6 +167,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
           <Scoreboard
             players={props.game.gameData.players}
             pointsToWin={configuration.pointsToScore}
+            currentPlayerIndex={gameData.currentPlayerIndex}
           />
         </div>
         <div className="h-[70vh] flex flex-col items-center">
