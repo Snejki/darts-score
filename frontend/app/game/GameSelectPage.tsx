@@ -15,9 +15,9 @@ export const GameSelectPage = () => {
           <Card
             key={index}
             onClick={() => {const path = Paths.gameConfiguration(item.type); navigate(path)}}
-            className="h-40 w-40 cursor-pointer primary hover:border-2 transition duration-1000 flex justify-center items-center"
+            className="h-40 w-40 cursor-pointer primary hover:bg-primary hover:text-primary-foreground transition duration-500 flex justify-center items-center"
           >
-            <h1 className="text-4xl font-black">{item.name}</h1>
+            <h1 className="text-3xl font-bold">{item.name}</h1>
             <CardContent className="overflow-visible p-0"></CardContent>
           </Card>
         ))}

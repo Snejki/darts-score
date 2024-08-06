@@ -23,7 +23,7 @@ interface GameItem {
 }
 
 const classicalGame: GameItem = {
-  name: "Classical game",
+  name: "Classical",
   configurationPage: (configuration, setConfiguration) => (
     <ClassicalConfiguration
       configuration={configuration as ClassicalConfigurationType}
@@ -83,6 +83,10 @@ export class Game {
   ) => {
     return this.games[game.type].gamePage(game, udapteGame);
   };
+  
+  static name = (gameType: GameTypes) => {    
+    return this.games[gameType].name;
+  }
 
   static getInitialGameData = (
     gameType: GameTypes,

@@ -45,7 +45,7 @@ export const CreatePlayerModal = (props: CreatePlayerModalProps) => {
 
         <DialogFooter>
           <DialogClose>
-            <Button color="secondary">Close</Button>
+            <Button variant="secondary">Close</Button>
           </DialogClose>
           <DialogClose>
             <Button onClick={onAddPlayer}>Add</Button>

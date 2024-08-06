@@ -30,15 +30,15 @@ export const ComboBoxInput = (props: ComboBoxInputProps) => {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="secondary"
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between"
-        >Pick a player</Button>
+        >Pick</Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." onInput={e => props.onInputChange((e.target as HTMLInputElement ).value)}/>
+          <CommandInput placeholder="Search..." onInput={e => props.onInputChange((e.target as HTMLInputElement ).value)}/>
           <CommandEmpty>No players found.</CommandEmpty>
           <CommandList>
             <CommandGroup>

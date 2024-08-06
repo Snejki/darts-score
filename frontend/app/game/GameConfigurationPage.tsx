@@ -24,6 +24,8 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
     configuration,
     setConfiguration
   );
+
+  const gameName = Game.name(props.gameType);
   const [errors, setErrors] = useState<{ [row: string]: string }>({});
   const submit = useSubmit();
 
@@ -54,7 +56,8 @@ export const GameConfigurationPage = (props: GameConfigurationPageProps) => {
 
   return (
     <div className="flex justify-center mt-20">
-      <div className="flex flex-col w-[50%] gap-5">
+      <div className="flex flex-col w-[50%] gap-5 p-10 border-[1px] rounded-lg">
+        <div className="flex justify-center text-3xl font-bold mb-5">{gameName} configuration</div>
         <PlayerConfigurationSection
           players={players}
           addPlayer={addPlayer}

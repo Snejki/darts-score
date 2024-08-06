@@ -11,9 +11,9 @@ import { Paths } from "~/common/Paths";
 
 export const NavBar = () => {
   return (
-    <NavigationMenu className="bg-background min-w-full w-full border-b-2 border-b-backgroundSecondary sticky top-0 left-0 flex justify-start">
+    <NavigationMenu className="bg-background min-w-full w-full border-b-2 border-b-backgroundSecondary sticky top-0 left-0 flex justify-start px-3">
       <GiDart />
-      <NavigationMenuList>
+      <NavigationMenuList className="ml-5">
         <NavigationMenuItem>
           <Link to={Paths.gameType}>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
