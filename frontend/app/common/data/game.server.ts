@@ -18,6 +18,21 @@ export const createGame = async (game: GameModel<unknown, unknown>) => {
     }})
 }
 
+export const updateGame = async (game: GameModel<unknown, unknown>) => {
+    const prisma = new PrismaClient();
+    prisma.$connect();
+
+    await prisma.game.update({
+        where: { id: game.id },
+        data: {
+            finishedAt: game.finishedAt ? new Date(game.finishedAt) : undefined,
+            gameData: game.gameData  as Prisma.JsonObject,
+            state: game.state,
+            winners: game.winners
+        }
+    });
+}
+
 export const getGame = async (id: string) => {
     const prisma = new PrismaClient();
     prisma.$connect();

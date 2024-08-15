@@ -117,7 +117,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
 
     if (playerGamePoints == "Exact" && isWinner()) {
       currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: "" });
+      props.game.winners.push({ id: currentPlayer.playerId, name: currentPlayer.name });
     }
   };
 
