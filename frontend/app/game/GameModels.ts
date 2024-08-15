@@ -1,6 +1,6 @@
 import { Player } from "@prisma/client";
 
-export type GameTypes = "x01";
+export type GameTypes = "x01" | "random";
 
 export interface GamePlayer extends Player {}
 

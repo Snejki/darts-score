@@ -20,7 +20,6 @@ export type checkInType = "All" | "Single" | "Double" | "Triple";
 
 export interface ClassicalConfigurationType {
   pointsToScore: pointsToScoreType;
-
   checkIn: checkInType;
 }
 

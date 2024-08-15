@@ -7,6 +7,8 @@ import {
   ClassicalGameModel,
 } from "./classical/ClassicalTypes";
 import { GameModel, GameTypes } from "./GameModels";
+import { RandomConfiguration } from "./random/RandomConfiguration";
+import { RandomConfigurationType } from "./random/models/RandomGameModels";
 
 type GameItems = {
   [x in GameTypes]: GameItem;
@@ -54,9 +56,20 @@ const classicalGame: GameItem = {
   },
 };
 
+const randomGame: GameItem = {
+  name: "Random",
+  configurationPage: (configuration, setConfiguration) => (
+    <RandomConfiguration 
+      configuration={configuration as RandomConfigurationType} 
+      setConfiguration={setConfiguration as React.Dispatch<SetStateAction<RandomConfigurationType>>} 
+    />
+  )
+}
+
 export class Game {
   private static games: GameItems = {
     x01: classicalGame,
+    random: randomGame
   };
 
   static getGameTypes = () => {
