@@ -1,9 +1,9 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { GameModel } from "~/game/GameModels";
+import { getPrismaClient } from "./db.server";
 
 export const createGame = async (game: GameModel<unknown, unknown>) => {
-    const prisma = new PrismaClient();
-    prisma.$connect();
+    const prisma = getPrismaClient();
 
     await prisma.game.create({data: {
         id: game.id,
@@ -19,8 +19,8 @@ export const createGame = async (game: GameModel<unknown, unknown>) => {
 }
 
 export const updateGame = async (game: GameModel<unknown, unknown>) => {
-    const prisma = new PrismaClient();
-    prisma.$connect();
+    const prisma = getPrismaClient();
+
 
     await prisma.game.update({
         where: { id: game.id },
@@ -34,8 +34,8 @@ export const updateGame = async (game: GameModel<unknown, unknown>) => {
 }
 
 export const getGame = async (id: string) => {
-    const prisma = new PrismaClient();
-    prisma.$connect();
+    const prisma = getPrismaClient();
+
 
     return await prisma.game.findFirst({
         where: {

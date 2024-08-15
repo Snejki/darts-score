@@ -87,7 +87,7 @@ const PlayerCard = (props: PlayerProps) => {
               <div>
                 Min: {roundScores.length > 0 ? Math.min(...roundScores) : "-"}
               </div>
-              <div>Avg: {roundScores.length > 0 ? avg : "-"}</div>
+              <div>Avg: {roundScores.length > 0 ? avg?.toFixed(2) : "-"}</div>
             </div>
           </div>
         </div>

@@ -30,7 +30,7 @@ export const PlayerAdditionalInfo = (props: PlayerAdditionalInfoProps) => {
         <Table>
           <TableHeader>
             {roundsArray.map((round) => (
-              <TableHead key={round}>Throw {round}</TableHead>
+              <TableHead key={round}>Throw {round + 1}</TableHead>
             ))}
             <TableHead key="4">Sum</TableHead>
           </TableHeader>

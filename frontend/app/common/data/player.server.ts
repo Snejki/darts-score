@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import { Player } from '~/players/PlayerListPage';
+import { getPrismaClient } from './db.server';
 
 export const createPlayer = async (player: Player) => {
     try {
-        const prisma = new PrismaClient();
-        prisma.$connect();
+        const prisma = getPrismaClient();
+
     
         await prisma.player.create({
             data: {
@@ -21,8 +21,8 @@ export const createPlayer = async (player: Player) => {
 export const getPlayers = async () => {
 
     try {
-        const prisma = new PrismaClient();
-        prisma.$connect();
+        const prisma = getPrismaClient();
+
     
         return await prisma.player.findMany();
     } catch (e) {
@@ -33,9 +33,7 @@ export const getPlayers = async () => {
 }
 
 export const searchPlayers = async (query: string) => {
-    const prisma = new PrismaClient();
-    prisma.$connect();
-
+    const prisma = getPrismaClient();
     return prisma.player.findMany({ where: {name: { contains: query }}});
 }
 
