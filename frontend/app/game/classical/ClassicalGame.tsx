@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { GameBoard } from "~/common/components/GameBoard";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ClassicalGameModel, ClassicalGamePlayerThrow } from "./ClassicalTypes";
 import { Scoreboard } from "./components/Scoreboard";
 import { CurrentRound } from "./components/CurrentRound";
 import { calculateCurrenRoundPoints } from "./utils/classicalGameUtils";
 import { WinnerModal } from "~/common/components/WinnerModal/WinnerModal";
+import { DartBoard, DartScore } from "~/common/components/DartBoard/DartBoard";
 
 interface ClassicalGameProps {
   game: ClassicalGameModel;
@@ -16,12 +16,22 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
     game: { gameData, configuration, winners },
   } = props;
 
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const width = ref.current.offsetWidth;
+    const height = ref.current.offsetHeight;
+
+    setDartboardSize(Math.min(width, height));
+  }, [ref]);
+
+  const [dartboardSize, setDartboardSize] = useState();
+
   const MAX_ROUND_THROWS = 3;
   const [currentRoundThrows, setCurrentRoundThrows] = useState<
     ClassicalGamePlayerThrow[]
   >([]);
 
-  const onDartBoardClick = (segment: string | undefined) => {
+  const onDartBoardClick = (segment : DartScore) => {
     if (isGameFinished() || !segment) {
       return;
     }
@@ -31,16 +41,16 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
     }
 
     if (segment === undefined) {
-      setCurrentRoundThrows([
-        ...currentRoundThrows,
+      setCurrentRoundThrows(curr => ([
+        ...curr,
         { points: 0, segment: "0" },
-      ]);
+      ]));
     }
 
-    setCurrentRoundThrows([
-      ...currentRoundThrows,
-      { segment, points: calculatePoints(segment) },
-    ]);
+    setCurrentRoundThrows(curr => ([
+      ...curr,
+      { segment : calculateSegment(segment), points: calculatePoints(segment) },
+    ]));
   };
 
   const onFinishRound = () => {
@@ -170,7 +180,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
             currentPlayerIndex={gameData.currentPlayerIndex}
           />
         </div>
-        <div className="h-[70vh] flex flex-col items-center">
+        <div className="h-[70vh] flex flex-col items-center" ref={ref}>
           <CurrentRound
             player={
               props.game.gameData.players[
@@ -182,7 +192,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
             pointsToScore={configuration.pointsToScore}
             onFinishRound={onFinishRound}
           />
-          <GameBoard onDartboardClick={onDartBoardClick} />
+          <DartBoard size={dartboardSize} onClick={onDartBoardClick}/>
         </div>
       </div>
       <WinnerModal winners={winners} showModal={!!props.game.finishedAt} />
@@ -190,7 +200,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
   );
 };
 
-const calculatePoints = (segment: string | undefined) => {
+const calculatePoints = (segment: DartScore) => {
   if (segment == undefined) {
     return 0;
   }
@@ -203,7 +213,19 @@ const calculatePoints = (segment: string | undefined) => {
     return 25;
   }
 
-  const mulitplier = segment[0] === "S" ? 1 : segment[0] === "D" ? 2 : 3;
+  const mutiplier = segment.Multiplier === "S" ? 1 : segment.Multiplier === "D" ? 2 : 3;
 
-  return mulitplier * +segment.substring(1, segment.length);
+  return mutiplier * segment.Value;
 };
+
+const calculateSegment = (segment: DartScore) => {
+  if(segment === "BULL") {
+    return "BULL";
+  }
+
+  if(segment === "OUTER") {
+    return "OUTER";
+  }
+
+  return `${segment.Multiplier}${segment.Value}`;
+}
