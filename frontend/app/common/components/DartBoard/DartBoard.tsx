@@ -38,14 +38,13 @@ export type DartScore =
 interface DartBoardProps {
   size: number;
   onClick: (value: DartScore) => void;
+  customSectionColors?: { [id: string]: string };
 }
 
 export const DartBoard = (props: DartBoardProps) => {
   const canvasRef = useRef<Canvas | null>(null);
 
   const center = props.size / 2;
-
-  console.log(props.size)
 
   const bullsEyeRadius = 40;
 
@@ -60,7 +59,8 @@ export const DartBoard = (props: DartBoardProps) => {
     outerRadius: number,
     color: string,
     multiplier : "S" | "D" | "T",
-    pointValue : 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+    pointValue : 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20,
+    id : string
   ) {
     const path = [];
     for (let angle = startAngle; angle <= endAngle; angle++) {
@@ -76,12 +76,14 @@ export const DartBoard = (props: DartBoardProps) => {
       path.push(`L ${x} ${y}`);
     }
 
+    const calculatedColor = props.customSectionColors?.[id] ?? color;
+    console.log(props.customSectionColors?.[id]);
+
     const section = new Path(path.join(" "), {
-      fill: color,
+      fill: calculatedColor,
       stroke: "black",
       selectable: false,
     });
-    //section.id = "12";
 
     section.on("mousedown", () => {
         props.onClick({Multiplier: multiplier, Value: pointValue});
@@ -93,7 +95,7 @@ export const DartBoard = (props: DartBoardProps) => {
     });
 
     section.on("mouseout", () => {
-      section.set("fill", color);
+      section.set("fill", calculatedColor);
       canvasRef.current?.renderAll();
     });
 
@@ -120,7 +122,8 @@ export const DartBoard = (props: DartBoardProps) => {
         radius * 0.6,
         multiColors[i % 2],
         "T",
-        pointValue
+        pointValue,
+        `T${pointValue}`
       );
       // Single outer section
       createSection(
@@ -130,7 +133,8 @@ export const DartBoard = (props: DartBoardProps) => {
         radius * 0.93,
         singleColors[i % 2],
         "S",
-        pointValue
+        pointValue,
+        `S${pointValue}`
       );
       // Double section
       createSection(
@@ -140,7 +144,8 @@ export const DartBoard = (props: DartBoardProps) => {
         radius,
         multiColors[i % 2],
         "D",
-        pointValue
+        pointValue,
+        `D${pointValue}`
       );
       // Single inner section
       createSection(
@@ -150,7 +155,8 @@ export const DartBoard = (props: DartBoardProps) => {
         radius * 0.52,
         singleColors[i % 2],
         "S",
-        pointValue
+        pointValue,
+        `S${pointValue}`
       );
 
       const angle = (startAngle + endAngle) / 2;
@@ -245,7 +251,7 @@ export const DartBoard = (props: DartBoardProps) => {
     drawDartBoard();
 
     return () => canvasRef.current?.dispose();
-  }, [props.size]);
+  }, [props.size, props.customSectionColors]);
 
   return (
     <div>
