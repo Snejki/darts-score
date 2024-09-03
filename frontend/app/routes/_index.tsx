@@ -17,6 +17,7 @@ export default function Index() {
       "T20": "cyan",
       "S20": "cyan",
       "D20": "cyan",
+      "BULL": "yellow",
     });
   }
   , 3000);

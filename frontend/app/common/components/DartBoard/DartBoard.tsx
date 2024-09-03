@@ -7,33 +7,17 @@ import {
 } from "fabric"; // browser
 import { useEffect, useRef } from "react";
 
+type normalPointsType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20;
+type multiplierType = "S" | "D" | "T";
+type outerType = "OUTER";
+type bullType = "BULL";
+
 export type DartScore =
   | {
-      Multiplier: "S" | "D" | "T";
-      Value:
-        | 1
-        | 2
-        | 3
-        | 4
-        | 5
-        | 6
-        | 7
-        | 8
-        | 9
-        | 10
-        | 11
-        | 12
-        | 13
-        | 14
-        | 15
-        | 16
-        | 17
-        | 18
-        | 19
-        | 20;
+      Multiplier: multiplierType;
+      Value: normalPointsType;
     }
-  | "OUTER"
-  | "BULL";
+  | outerType | bullType;
 
 interface DartBoardProps {
   size: number;
@@ -48,11 +32,41 @@ export const DartBoard = (props: DartBoardProps) => {
 
   const bullsEyeRadius = 40;
 
-  const sectionPoints = [
+  const sectionPoints : normalPointsType[] = [
     20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5,
   ];
 
-  function createSection(
+  function drawCirclePointSection(radius: number, color: string, points: bullType | outerType) {
+    const customColor = props.customSectionColors?.[points] ?? color;
+
+    const circle = new Circle({
+      left: center - radius,
+      top: center - radius,
+      radius: radius,
+      fill: customColor,
+      stroke: "black",
+      selectable: false,
+    });
+
+
+    circle.on("mousedown", () => {
+        props.onClick(points);
+    });
+
+    circle.on("mouseover", () => {
+        circle.set("fill", "blue");
+      canvasRef.current?.renderAll();
+    });
+
+    circle.on("mouseout", () => {
+        circle.set("fill", customColor);
+      canvasRef.current?.renderAll();
+    });
+
+    canvasRef.current?.add(circle);
+  }
+
+  function drawNormalPointSection(
     startAngle: number,
     endAngle: number,
     innerRadius: number,
@@ -77,7 +91,6 @@ export const DartBoard = (props: DartBoardProps) => {
     }
 
     const calculatedColor = props.customSectionColors?.[id] ?? color;
-    console.log(props.customSectionColors?.[id]);
 
     const section = new Path(path.join(" "), {
       fill: calculatedColor,
@@ -115,7 +128,7 @@ export const DartBoard = (props: DartBoardProps) => {
 
       const pointValue = sectionPoints[i];
 
-      createSection(
+      drawNormalPointSection(
         startAngle,
         endAngle,
         radius * 0.52,
@@ -126,7 +139,7 @@ export const DartBoard = (props: DartBoardProps) => {
         `T${pointValue}`
       );
       // Single outer section
-      createSection(
+      drawNormalPointSection(
         startAngle,
         endAngle,
         radius * 0.6,
@@ -137,7 +150,7 @@ export const DartBoard = (props: DartBoardProps) => {
         `S${pointValue}`
       );
       // Double section
-      createSection(
+      drawNormalPointSection(
         startAngle,
         endAngle,
         radius * 0.93,
@@ -148,7 +161,7 @@ export const DartBoard = (props: DartBoardProps) => {
         `D${pointValue}`
       );
       // Single inner section
-      createSection(
+      drawNormalPointSection(
         startAngle,
         endAngle,
         radius * 0.1,
@@ -183,60 +196,8 @@ export const DartBoard = (props: DartBoardProps) => {
       canvasRef.current?.add(label);
     }
 
-    const bullseyeOuter = new Circle({
-      left: center - bullsEyeRadius,
-      top: center - bullsEyeRadius,
-      radius: bullsEyeRadius,
-      fill: "green",
-      stroke: "black",
-      selectable: false,
-      touchCornerSize: 0,
-      angle: 0,
-      cornerSize: 0,
-    });
-
-    bullseyeOuter.on("mousedown", () => {
-        props.onClick("OUTER");
-    });
-
-    bullseyeOuter.on("mouseover", () => {
-        bullseyeOuter.set("fill", "blue");
-      canvasRef.current?.renderAll();
-    });
-
-    bullseyeOuter.on("mouseout", () => {
-        bullseyeOuter.set("fill", "green");
-      canvasRef.current?.renderAll();
-    });
-
-    const bullseyeInner = new Circle({
-      left: center - bullsEyeRadius / 2,
-      top: center - bullsEyeRadius / 2,
-      radius: bullsEyeRadius / 2,
-      fill: "red",
-      stroke: "black",
-      touchCornerSize: 0,
-      angle: 0,
-      cornerSize: 0,
-      selectable: false
-    });
-
-    bullseyeInner.on("mousedown", () => {
-        props.onClick("BULL");
-    });
-
-    bullseyeInner.on("mouseover", () => {
-        bullseyeInner.set("fill", "blue");
-      canvasRef.current?.renderAll();
-    });
-
-    bullseyeInner.on("mouseout", () => {
-        bullseyeInner.set("fill", "red");
-      canvasRef.current?.renderAll();
-    });
-
-    canvasRef.current?.add(bullseyeOuter);
-    canvasRef.current?.add(bullseyeInner);
+    drawCirclePointSection(bullsEyeRadius, "green", "OUTER");
+    drawCirclePointSection(bullsEyeRadius / 2, "red", "BULL");
   };
 
   useEffect(() => {
