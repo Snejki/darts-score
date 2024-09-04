@@ -5,6 +5,7 @@ import { CurrentRound } from "./components/CurrentRound";
 import { calculateCurrenRoundPoints } from "./utils/classicalGameUtils";
 import { WinnerModal } from "~/common/components/WinnerModal/WinnerModal";
 import { DartBoard, DartScore } from "~/common/components/DartBoard/DartBoard";
+import { Gamelayout } from "~/common/components/GameLayout/Gamelayout";
 
 interface ClassicalGameProps {
   game: ClassicalGameModel;
@@ -18,20 +19,20 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
 
   const ref = useRef(null);
   useLayoutEffect(() => {
-    const width = ref.current.offsetWidth;
-    const height = ref.current.offsetHeight;
+    const width = ref.current?.offsetWidth;
+    const height = ref.current?.offsetHeight;
 
     setDartboardSize(Math.min(width, height));
   }, [ref]);
 
-  const [dartboardSize, setDartboardSize] = useState();
+  const [dartboardSize, setDartboardSize] = useState(500);
 
   const MAX_ROUND_THROWS = 3;
   const [currentRoundThrows, setCurrentRoundThrows] = useState<
     ClassicalGamePlayerThrow[]
   >([]);
 
-  const onDartBoardClick = (segment : DartScore) => {
+  const onDartBoardClick = (segment: DartScore) => {
     if (isGameFinished() || !segment) {
       return;
     }
@@ -41,16 +42,13 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
     }
 
     if (segment === undefined) {
-      setCurrentRoundThrows(curr => ([
-        ...curr,
-        { points: 0, segment: "0" },
-      ]));
+      setCurrentRoundThrows((curr) => [...curr, { points: 0, segment: "0" }]);
     }
 
-    setCurrentRoundThrows(curr => ([
+    setCurrentRoundThrows((curr) => [
       ...curr,
-      { segment : calculateSegment(segment), points: calculatePoints(segment) },
-    ]));
+      { segment: calculateSegment(segment), points: calculatePoints(segment) },
+    ]);
   };
 
   const onFinishRound = () => {
@@ -127,7 +125,10 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
 
     if (playerGamePoints == "Exact" && isWinner()) {
       currentPlayer.score += currentRoundPoints;
-      props.game.winners.push({ id: currentPlayer.playerId, name: currentPlayer.name });
+      props.game.winners.push({
+        id: currentPlayer.playerId,
+        name: currentPlayer.name,
+      });
     }
   };
 
@@ -151,7 +152,7 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
       return true;
     }
 
-    if(checkIn === "All") {
+    if (checkIn === "All") {
       return true;
     }
 
@@ -172,15 +173,15 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-[250px_auto] h-full">
-        <div className="bg-backgroundSecondary">
+      <Gamelayout
+        ScoreBoardComponent={
           <Scoreboard
             players={props.game.gameData.players}
             pointsToWin={configuration.pointsToScore}
             currentPlayerIndex={gameData.currentPlayerIndex}
           />
-        </div>
-        <div className="h-[70vh] flex flex-col items-center" ref={ref}>
+        }
+        CurrentRoundComponent={
           <CurrentRound
             player={
               props.game.gameData.players[
@@ -192,10 +193,15 @@ export const ClassicalGame = (props: ClassicalGameProps) => {
             pointsToScore={configuration.pointsToScore}
             onFinishRound={onFinishRound}
           />
-          <DartBoard size={dartboardSize} onClick={onDartBoardClick}/>
-        </div>
-      </div>
-      <WinnerModal winners={winners} showModal={!!props.game.finishedAt} />
+        }
+        WinnerModalComponent={
+          <WinnerModal winners={winners} showModal={!!props.game.finishedAt} />
+        }
+        DartBoardComponent={
+          <DartBoard size={500} onClick={onDartBoardClick} />
+        }
+        ref={ref}
+      />
     </>
   );
 };
@@ -213,19 +219,20 @@ const calculatePoints = (segment: DartScore) => {
     return 25;
   }
 
-  const mutiplier = segment.Multiplier === "S" ? 1 : segment.Multiplier === "D" ? 2 : 3;
+  const mutiplier =
+    segment.Multiplier === "S" ? 1 : segment.Multiplier === "D" ? 2 : 3;
 
   return mutiplier * segment.Value;
 };
 
 const calculateSegment = (segment: DartScore) => {
-  if(segment === "BULL") {
+  if (segment === "BULL") {
     return "BULL";
   }
 
-  if(segment === "OUTER") {
+  if (segment === "OUTER") {
     return "OUTER";
   }
 
   return `${segment.Multiplier}${segment.Value}`;
-}
+};

@@ -8,7 +8,8 @@ import {
 } from "./classical/ClassicalTypes";
 import { GameModel, GameTypes } from "./GameModels";
 import { RandomConfiguration } from "./random/RandomConfiguration";
-import { RandomConfigurationType } from "./random/models/RandomGameModels";
+import { RandomConfigurationType, RandomGameDataModel } from "./random/models/RandomGameModels";
+import { RandomGame } from "./random/RandomGame";
 
 type GameItems = {
   [x in GameTypes]: GameItem;
@@ -59,12 +60,32 @@ const classicalGame: GameItem = {
 const randomGame: GameItem = {
   name: "Random",
   configurationPage: (configuration, setConfiguration) => (
-    <RandomConfiguration 
-      configuration={configuration as RandomConfigurationType} 
-      setConfiguration={setConfiguration as React.Dispatch<SetStateAction<RandomConfigurationType>>} 
+    <RandomConfiguration
+      configuration={configuration as RandomConfigurationType}
+      setConfiguration={
+        setConfiguration as React.Dispatch<
+          SetStateAction<RandomConfigurationType>
+        >
+      }
     />
-  )
-}
+  ),
+  getInitialGameDataModel: (gameData): RandomGameDataModel => {
+    return {
+      currentPlayerIndex: 0,
+      players: (
+        gameData as GameModel<RandomConfigurationType, RandomGameDataModel>
+      ).players.map((x) => ({
+        playerId: x.id,
+        name: x.name,
+        rounds: [],
+        score: 0,
+      })),
+    };
+  },
+  gamePage(game, updateGame) {
+    return <RandomGame />
+  },
+};
 
 export class Game {
   private static games: GameItems = {
